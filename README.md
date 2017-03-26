@@ -14,13 +14,13 @@ go get github.com/fiatjaf/go-levelup-js
 package main
 
 import (
-	"github.com/fiatjaf/go-levelup-js"
+	level "github.com/fiatjaf/go-levelup-js"
 	"github.com/gopherjs/gopherjs/js"
 	"honnef.co/go/js/console"
 )
 
 func main() {
-	db := level.NewDatabase("dbname", js.Global.Get("memdown"))
+	db := level.NewDatabase("fruitsdb", js.Global.Get("fruitdown"))
 	console.Log("setting key1 to x")
 	res, _ := db.Put("key1", "x")
 	res, _ = db.Get("key1")
@@ -67,6 +67,6 @@ For all adapters you're using it is also expected that the name you pass to `New
 <!doctype html>
 
 <script src=https://wzrd.in/standalone/levelup></script>
-<script src=https://wzrd.in/standalone/memdown></script>
+<script src=https://wzrd.in/standalone/fruitdown></script>
 <script src=bundle.js></script>
 ```

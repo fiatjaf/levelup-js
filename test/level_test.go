@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/fiatjaf/go-levelup-js"
+	level "github.com/fiatjaf/go-levelup-js"
 	"github.com/gopherjs/gopherjs/js"
 	"honnef.co/go/js/console"
 )

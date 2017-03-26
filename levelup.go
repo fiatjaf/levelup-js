@@ -1,4 +1,4 @@
-package level
+package levelup
 
 import (
 	"github.com/gopherjs/gopherjs/js"
