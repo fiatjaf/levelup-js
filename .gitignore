@@ -1,0 +1,6 @@
+node_modules
+*.swo
+*.swp
+*_test.js
+*.map
+*.min.js

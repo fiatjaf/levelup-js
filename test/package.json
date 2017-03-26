@@ -1,0 +1,11 @@
+{
+  "name": "go-levelup-js-test",
+  "description": "this file is just for running the tests. don't need to include or worry about this.",
+  "scripts": {
+    "test": "gopherjs build level_test.go -o level_test.js && node test.js > /tmp/test_results && icdiff expected /tmp/test_results && echo '' && echo 'if you do not see any diff above this line it is because the tests have passed.'"
+  },
+  "dependencies": {
+    "levelup": "^1.3.5",
+    "memdown": "^1.2.4"
+  }
+}
