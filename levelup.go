@@ -1,6 +1,7 @@
-package levelup
+package levelupjs
 
 import (
+	"github.com/fiatjaf/go-levelup"
 	"github.com/gopherjs/gopherjs/js"
 )
 
@@ -33,29 +34,15 @@ func (l Level) Del(key string) (interface{}, error) {
 	return rw.Read()
 }
 
-func (l Level) Batch(ops []Operation) (interface{}, error) {
+func (l Level) Batch(ops []levelup.Operation) (interface{}, error) {
 	rw := make(resultWaiter)
 	l.db.Call("batch", ops, rw.Done)
 	return rw.Read()
 }
 
-func OpPut(key, value string) Operation { return Operation{"type": "put", "key": key, "value": value} }
-func OpDel(key string) Operation        { return Operation{"type": "del", "key": key} }
-
-type Operation map[string]string
-
 // ---
 
-type RangeOpts struct {
-	GT      string
-	GTE     string
-	LT      string
-	LTE     string
-	Reverse bool
-	Limit   int
-}
-
-func (l Level) ReadRange(opts RangeOpts) *ReadIterator {
+func (l Level) ReadRange(opts levelup.RangeOpts) *ReadIterator {
 	actualOpts := map[string]interface{}{}
 	if opts.GT != "" {
 		actualOpts["gt"] = opts.GT

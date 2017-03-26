@@ -14,13 +14,14 @@ go get github.com/fiatjaf/go-levelup-js
 package main
 
 import (
-	level "github.com/fiatjaf/go-levelup-js"
+	"github.com/fiatjaf/go-levelup"
+	"github.com/fiatjaf/go-levelup-js"
 	"github.com/gopherjs/gopherjs/js"
 	"honnef.co/go/js/console"
 )
 
 func main() {
-	db := level.NewDatabase("fruitsdb", js.Global.Get("fruitdown"))
+	db := levelupjs.NewDatabase("", js.Global.Get("fruitdown"))
 	console.Log("setting key1 to x")
 	res, _ := db.Put("key1", "x")
 	res, _ = db.Get("key1")
@@ -35,14 +36,14 @@ func main() {
 	console.Log("res at key1: ", res)
 
 	console.Log("batch")
-	db.Batch([]level.Operation{
-		level.OpPut("key2", "w"),
-		level.OpPut("key3", "z"),
-		level.OpDel("key1"),
-		level.OpPut("key1", "t"),
-		level.OpPut("key4", "m"),
-		level.OpPut("key5", "n"),
-		level.OpDel("key3"),
+	db.Batch([]levelup.Operation{
+		levelup.OpPut("key2", "w"),
+		levelup.OpPut("key3", "z"),
+		levelup.OpDel("key1"),
+		levelup.OpPut("key1", "t"),
+		levelup.OpPut("key4", "m"),
+		levelup.OpPut("key5", "n"),
+		levelup.OpDel("key3"),
 	})
 	res, _ = db.Get("key1")
 	console.Log("res at key1: ", res)
@@ -52,7 +53,7 @@ func main() {
 	console.Log("res at key3: ", res)
 
 	console.Log("reading all")
-	iter := db.ReadRange(level.RangeOpts{})
+	iter := db.ReadRange(levelup.RangeOpts{})
 	for iter.Next() {
 		console.Log("row: ", iter.Key(), " ", iter.Value())
 	}
