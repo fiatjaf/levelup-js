@@ -1,6 +1,8 @@
 node_modules
 *.swo
 *.swp
-*_test.js
+test.js
+example.js
 *.map
 *.min.js
+npm-debug.log

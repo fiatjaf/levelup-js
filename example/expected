@@ -3,11 +3,11 @@ setting key2 to 2
 res at key2:  x
 res at key2:  y
 deleting key1
-res at key1:  undefined
+res at key1:  
 batch
 res at key1:  t
 res at key2:  w
-res at key3:  undefined
+res at key3:  
 reading all
 row:  key1   t
 row:  key2   w
