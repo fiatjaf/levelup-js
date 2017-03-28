@@ -5,18 +5,29 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-func NewDatabase(dbName string, backend *js.Object) *Level {
+func NewDatabase(dbName string, adapter *js.Object) *Level {
 	db := js.Global.Get("levelup").Invoke(
 		dbName,
 		map[string]*js.Object{
-			"db": backend,
+			"db": adapter,
 		},
 	)
-	return &Level{db}
+	return &Level{dbName, db, adapter}
 }
 
 type Level struct {
-	db *js.Object
+	dbname  string
+	db      *js.Object
+	adapter *js.Object
+}
+
+func (l Level) Close() { l.db.Close() }
+func (l Level) Erase() {
+	l.Close()
+
+	if l.adapter.Get("destroy") != js.Undefined {
+		l.adapter.Call("destroy", l.dbname)
+	}
 }
 
 func (l Level) Put(key, value string) error {
