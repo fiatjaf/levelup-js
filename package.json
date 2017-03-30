@@ -2,7 +2,7 @@
   "name": "go-levelup-js",
   "description": "this file is just for running the tests. don't need to include or worry about this.",
   "scripts": {
-    "example": "gopherjs build example/example.go -o example/example.js && node example/run.js > /tmp/levelupjsexampleoutput && icdiff example/expected /tmp/levelupjsexampleoutput && echo '' && echo 'if you do not see any diff above this line it is because everything is well.'",
+    "example": "gopherjs build example/example.go -o example/example.js && node example/run.js",
     "test": "gopherjs test -c $(realpath --relative-to=$GOPATH/src ./test) -o test/test.js && node test/run.js"
   },
   "dependencies": {

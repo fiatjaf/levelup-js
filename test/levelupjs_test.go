@@ -10,6 +10,7 @@ import (
 
 func TestAll(t *testing.T) {
 	db := levelupjs.NewDatabase("", js.Global.Get("memdown"))
+	defer db.Erase()
 
 	tests.Test(db, t)
 }

@@ -8,6 +8,7 @@ import (
 
 func main() {
 	db := levelupjs.NewDatabase("", js.Global.Get("memdown"))
+	defer db.Erase()
 
 	examples.Example(db)
 }
