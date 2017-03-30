@@ -1,7 +1,5 @@
-# levelup bindings for gopherjs.  [![GoDoc](https://godoc.org/github.com/fiatjaf/go-levelup-js?status.png)](http://godoc.org/github.com/fiatjaf/go-levelup-js)
+# levelup bindings for gopherjs.  [![GoDoc](https://godoc.org/github.com/fiatjaf/go-levelup-js?status.png)](http://godoc.org/github.com/fiatjaf/go-levelup-js) [![travis ci badge](https://travis-ci.org/fiatjaf/levelup-js.svg?branch=master)](https://travis-ci.org/fiatjaf/levelup-js)
 
-
-[this](http://npmjs.org/levelup) is the levelup we're talking about.
 
 ## How to use:
 
@@ -21,44 +19,46 @@ import (
 )
 
 func main() {
-	db := levelupjs.NewDatabase("", js.Global.Get("fruitdown"))
-	console.Log("setting key1 to x")
-	res, _ := db.Put("key1", "x")
-	res, _ = db.Get("key1")
-	console.Log("setting key2 to 2")
-	console.Log("res at key2: ", res)
-	res, _ = db.Put("key2", "y")
-	res, _ = db.Get("key2")
-	console.Log("res at key2: ", res)
-	console.Log("deleting key1")
-	res, _ = db.Del("key1")
-	res, _ = db.Get("key1")
-	console.Log("res at key1: ", res)
+	updb := levelupjs.NewDatabase("dbname", js.Global.Get("fruitdown"))
+	db := stringlevelup.StringDB(updb)
 
-	console.Log("batch")
+	fmt.Println("setting key1 to x")
+	db.Put("key1", "x")
+	res, _ := db.Get("key1")
+	fmt.Println("setting key2 to 2")
+	fmt.Println("res at key2: ", res)
+	db.Put("key2", "y")
+	res, _ = db.Get("key2")
+	fmt.Println("res at key2: ", res)
+	fmt.Println("deleting key1")
+	db.Del("key1")
+	res, _ = db.Get("key1")
+	fmt.Println("res at key1: ", res)
+
+	fmt.Println("batch")
 	db.Batch([]levelup.Operation{
-		levelup.OpPut("key2", "w"),
-		levelup.OpPut("key3", "z"),
-		levelup.OpDel("key1"),
-		levelup.OpPut("key1", "t"),
-		levelup.OpPut("key4", "m"),
-		levelup.OpPut("key5", "n"),
-		levelup.OpDel("key3"),
+		stringlevelup.Put("key2", "w"),
+		stringlevelup.Put("key3", "z"),
+		stringlevelup.Del("key1"),
+		stringlevelup.Put("key1", "t"),
+		stringlevelup.Put("key4", "m"),
+		stringlevelup.Put("key5", "n"),
+		stringlevelup.Del("key3"),
 	})
 	res, _ = db.Get("key1")
-	console.Log("res at key1: ", res)
+	fmt.Println("res at key1: ", res)
 	res, _ = db.Get("key2")
-	console.Log("res at key2: ", res)
+	fmt.Println("res at key2: ", res)
 	res, _ = db.Get("key3")
-	console.Log("res at key3: ", res)
+	fmt.Println("res at key3: ", res)
 
-	console.Log("reading all")
-	iter := db.ReadRange(levelup.RangeOpts{})
-	for iter.Next() {
-		console.Log("row: ", iter.Key(), " ", iter.Value())
+	fmt.Println("reading all")
+	iter := db.ReadRange(nil)
+	for ; iter.Valid(); iter.Next() {
+		fmt.Println("row: ", iter.Key(), " ", iter.Value())
 	}
-	console.Log("iter error: ", iter.Error())
-}
+	fmt.Println("iter error: ", iter.Error())
+	iter.Release()
 ```
 
 For now the library expects to find `levelup` in the global object (`window` in browser).

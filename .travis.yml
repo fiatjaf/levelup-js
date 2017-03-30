@@ -1,0 +1,13 @@
+language: go
+go:
+  - 1.8
+install:
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm install
+  - go get github.com/fiatjaf/levelup
+  - go get github.com/fiatjaf/levelup/tests
+  - go get github.com/gopherjs/gopherjs
+  - go get github.com/gopherjs/gopherjs/js
+script: npm run test
