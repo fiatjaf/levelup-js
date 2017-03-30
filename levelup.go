@@ -21,50 +21,62 @@ type Level struct {
 	adapter *js.Object
 }
 
-func (l Level) Close() { l.db.Close() }
+func (l Level) Close() {
+	if l.db.Get("close") != js.Undefined {
+		l.db.Call("close", func() {})
+	}
+}
 func (l Level) Erase() {
 	l.Close()
-
 	if l.adapter.Get("destroy") != js.Undefined {
-		l.adapter.Call("destroy", l.dbname)
+		l.adapter.Call("destroy", l.dbname, func() {})
 	}
 }
 
-func (l Level) Put(key, value string) error {
+func (l Level) Put(key, value []byte) error {
 	rw := make(resultWaiter)
-	l.db.Call("put", key, value, rw.Done)
+	l.db.Call("put", string(key), string(value), rw.Done)
 	_, jserr := rw.Read()
 	return jserr.ProbablyNil()
 }
 
-func (l Level) Get(key string) (string, error) {
+func (l Level) Get(key []byte) ([]byte, error) {
 	rw := make(resultWaiter)
-	l.db.Call("get", key, rw.Done)
+	l.db.Call("get", string(key), rw.Done)
 	data, jserr := rw.Read()
 	if !jserr.IsNil() {
 		if jserr.Name() == "NotFoundError" {
-			return "", levelup.NotFound
+			return nil, levelup.NotFound
 		}
 
-		return "", jserr.ProbablyNil()
+		return nil, jserr.ProbablyNil()
 	}
 	datastring := data.String()
 	if datastring == "" {
-		return "", levelup.NotFound
+		return nil, levelup.NotFound
 	}
-	return datastring, nil
+	return []byte(datastring), nil
 }
 
-func (l Level) Del(key string) error {
+func (l Level) Del(key []byte) error {
 	rw := make(resultWaiter)
-	l.db.Call("del", key, rw.Done)
+	l.db.Call("del", string(key), rw.Done)
 	_, jserr := rw.Read()
 	return jserr.ProbablyNil()
 }
 
 func (l Level) Batch(ops []levelup.Operation) error {
+	actualOps := make([]map[string]string, len(ops))
+	for i, op := range ops {
+		actualOps[i] = map[string]string{
+			"type":  op.Type,
+			"key":   string(op.Key),
+			"value": string(op.Value),
+		}
+	}
+
 	rw := make(resultWaiter)
-	l.db.Call("batch", ops, rw.Done)
+	l.db.Call("batch", actualOps, rw.Done)
 	_, jserr := rw.Read()
 	return jserr.ProbablyNil()
 }
@@ -78,8 +90,8 @@ func (l Level) ReadRange(opts *levelup.RangeOpts) levelup.ReadIterator {
 	opts.FillDefaults()
 
 	optsMap := map[string]interface{}{}
-	optsMap["gte"] = opts.Start
-	optsMap["lt"] = opts.End
+	optsMap["gte"] = string(opts.Start)
+	optsMap["lt"] = string(opts.End)
 	optsMap["reverse"] = opts.Reverse
 	optsMap["limit"] = opts.Limit
 
@@ -175,12 +187,12 @@ func (ri *ReadIterator) Next() {
 	}
 }
 
-func (ri *ReadIterator) Key() string {
-	return ri.all[ri.cursor].Get("key").String()
+func (ri *ReadIterator) Key() []byte {
+	return []byte(ri.all[ri.cursor].Get("key").String())
 }
 
-func (ri *ReadIterator) Value() string {
-	return ri.all[ri.cursor].Get("value").String()
+func (ri *ReadIterator) Value() []byte {
+	return []byte(ri.all[ri.cursor].Get("value").String())
 }
 
 func (ri *ReadIterator) Error() error { return ri.err.ProbablyNil() }
