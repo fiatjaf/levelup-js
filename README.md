@@ -3,8 +3,10 @@
 
 ## How to use:
 
-```
+```shell
 go get github.com/fiatjaf/go-levelup-js
+npm install levelup
+npm install fruitdown # or other adapter, you probably want 'memdown' for testing.
 ```
 
 
@@ -14,12 +16,13 @@ package main
 import (
 	"github.com/fiatjaf/go-levelup"
 	"github.com/fiatjaf/go-levelup-js"
+    "github.com/fiatjaf/levelup/stringlevelup"
 	"github.com/gopherjs/gopherjs/js"
 	"honnef.co/go/js/console"
 )
 
 func main() {
-	updb := levelupjs.NewDatabase("dbname", js.Global.Get("fruitdown"))
+	updb := levelupjs.NewDatabase("dbname", "fruitdown")
 	db := stringlevelup.StringDB(updb)
 
 	fmt.Println("setting key1 to x")
@@ -61,13 +64,12 @@ func main() {
 	iter.Release()
 ```
 
-For now the library expects to find `levelup` in the global object (`window` in browser).
-For all adapters you're using it is also expected that the name you pass to `NewDatabase` corresponds to the global name of the adapter.
+`levelupjs` will try to `require()` both `levelup` and the name of the adapter you gave. If `require` is not available it will try to load these from the global namespace, so `window.levelup` and `window[adapterName]` must be set. If you're running this on a [browserified](http://browserify.org/) program or Node.js you should be fine with the above instructions, but if you're just using raw HTML you'll have to include these dependencies before, like:
 
 ```html
 <!doctype html>
 
 <script src=https://wzrd.in/standalone/levelup></script>
 <script src=https://wzrd.in/standalone/fruitdown></script>
-<script src=bundle.js></script>
+<script src=your-script-that-includes-levelupjs.js></script>
 ```

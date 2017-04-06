@@ -10,4 +10,4 @@ install:
   - go get github.com/fiatjaf/levelup/tests
   - go get github.com/gopherjs/gopherjs
   - go get github.com/gopherjs/gopherjs/js
-script: npm run test
+script: gopherjs test

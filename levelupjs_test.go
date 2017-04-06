@@ -5,11 +5,10 @@ import (
 
 	"github.com/fiatjaf/levelup-js"
 	tests "github.com/fiatjaf/levelup/tests"
-	"github.com/gopherjs/gopherjs/js"
 )
 
 func TestAll(t *testing.T) {
-	db := levelupjs.NewDatabase("", js.Global.Get("memdown"))
+	db := levelupjs.NewDatabase("", "memdown")
 	defer db.Erase()
 
 	tests.Test(db, t)

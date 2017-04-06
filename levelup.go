@@ -5,8 +5,20 @@ import (
 	"github.com/gopherjs/gopherjs/js"
 )
 
-func NewDatabase(dbName string, adapter *js.Object) *Level {
-	db := js.Global.Get("levelup").Invoke(
+func NewDatabase(dbName, adapterName string) *Level {
+	var levelup *js.Object
+	var adapter *js.Object
+
+	require := js.Global.Get("require")
+	if require != js.Undefined {
+		levelup = require.Invoke("levelup")
+		adapter = require.Invoke(adapterName)
+	} else {
+		levelup = js.Global.Get("levelup")
+		adapter = js.Global.Get(adapterName)
+	}
+
+	db := levelup.Invoke(
 		dbName,
 		map[string]*js.Object{
 			"db": adapter,

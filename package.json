@@ -2,11 +2,13 @@
   "name": "go-levelup-js",
   "description": "this file is just for running the tests. don't need to include or worry about this.",
   "scripts": {
-    "example": "gopherjs build example/example.go -o example/example.js && node example/run.js",
-    "test": "gopherjs test -c github.com/fiatjaf/levelup-js/test -o test/test.js && node test/run.js"
+    "example": "gopherjs run example/example.go"
   },
   "dependencies": {
     "levelup": "1",
     "memdown": "1"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.4.14"
   }
 }
