@@ -1,5 +1,10 @@
-# levelup bindings for gopherjs.  [![GoDoc](https://godoc.org/github.com/fiatjaf/go-levelup-js?status.png)](http://godoc.org/github.com/fiatjaf/go-levelup-js) [![travis ci badge](https://travis-ci.org/fiatjaf/levelup-js.svg?branch=master)](https://travis-ci.org/fiatjaf/levelup-js)
+[![GoDoc](https://godoc.org/github.com/fiatjaf/go-levelup-js?status.png)](http://godoc.org/github.com/fiatjaf/go-levelup-js) [![travis ci badge](https://travis-ci.org/fiatjaf/levelup-js.svg?branch=master)](https://travis-ci.org/fiatjaf/levelup-js)
 
+# levelup bindings for gopherjs
+
+This package implements the [levelup](https://github.com/fiatjaf/levelup) interface, and at the same time wraps https://www.npmjs.com/package/levelup so you can use any of the [supported leveldown backends](https://github.com/Level/levelup/wiki/Modules#storage-back-ends).
+
+## how to use
 
 ```go
 package main
@@ -7,14 +12,14 @@ package main
 import (
 	"github.com/fiatjaf/go-levelup"
 	"github.com/fiatjaf/go-levelup-js"
-    "github.com/fiatjaf/levelup/stringlevelup"
-	"github.com/gopherjs/gopherjs/js"
-	"honnef.co/go/js/console"
+	"github.com/fiatjaf/levelup/stringlevelup"
 )
 
 func main() {
-	updb := levelupjs.NewDatabase("dbname", "fruitdown")
-	db := stringlevelup.StringDB(updb)
+	bdb := levelupjs.NewDatabase("my-beautiful-browser-database", "fruitdown")
+	defer bdb.Erase()
+
+	db := stringlevelup.StringDB(bdb)
 
 	fmt.Println("setting key1 to x")
 	db.Put("key1", "x")
@@ -55,6 +60,8 @@ func main() {
 	iter.Release()
 ```
 
+if you don't call `stringlevelup.StringDB` on the object returned by `NewDatabase` you still can use the same methods, only replacing all `string` arguments with `[]byte` (returned values will also be bytes). I've just used the string approach here for readability, but it is slower.
+
 `levelupjs` will try to `require()` both `levelup` and the name of the adapter you gave. If `require` is not available it will try to load these from the global namespace, so `window.levelup` and `window[adapterName]` must be set. If you're running this on a Node.js environment you should be fine with the above instructions, but if you're just using raw HTML you'll have to include these dependencies before, like:
 
 ## How to use:
@@ -74,6 +81,8 @@ You can just include `levelup` and the adapter of your choice. They will be pick
 If you're using Webpack, this is probably what you have to do.
 
 ### [browserify](http://browserify.org/)
+
+For the JS libraries to be available for being required from the GopherJS environment they must be "globally" requireable, that's not possible if you do the normal browserifying stuff, but it is if you bundle them the following way:
 
 ```shell
 go get github.com/fiatjaf/go-levelup-js
